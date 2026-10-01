@@ -73,6 +73,26 @@ internal static class SelfTestRunner
             string modDll = Path.Combine(modRoot, "Synthetic.Mod.dll");
             File.Copy(Assembly.GetExecutingAssembly().Location, modDll);
             var signatureDatabase = new SignatureDatabase(signatureDirectory);
+            string behaviorDll = Path.Combine(root, "Synthetic.BehaviorCheat.dll");
+            await File.WriteAllTextAsync(behaviorDll, string.Join('|', new[]
+            {
+                "GodMode", "ToggleGodMode", "InfiniteHealth",
+                "StatChanger", "AvatarStatOverride", "SetAvatarStrength",
+                "SilentAim", "AimTarget", "AimBone",
+                "Freecam", "DetachCamera", "CameraTeleport"
+            }));
+            var behaviorReport = NewReport();
+            var behaviorFiles = new FileSystemScanner(signatureDatabase, new HashMatcher(signatureDatabase));
+            await behaviorFiles.InspectFileAsync(behaviorDll, false, null, behaviorReport, CancellationToken.None);
+            string[] expectedBehaviorRules =
+            {
+                "God Mode behavior signature", "Stat Changer behavior signature",
+                "Aim manipulation behavior signature", "Freecam behavior signature"
+            };
+            if (expectedBehaviorRules.Any(rule => !behaviorReport.Findings.Any(x =>
+                    x.Status == FindingStatus.Detected && x.Detection == rule)))
+                throw new InvalidOperationException("Behavior cheat signature self-test failed.");
+
             var modScanner = new ModAssemblyScanner(new FileSystemScanner(signatureDatabase,
                 new HashMatcher(signatureDatabase)), signatureDatabase);
             var modReport = NewReport();

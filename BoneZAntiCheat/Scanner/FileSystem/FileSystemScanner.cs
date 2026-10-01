@@ -126,10 +126,10 @@ public sealed class FileSystemScanner(SignatureDatabase database, HashMatcher ha
 
             if (info.Length <= MaxStaticBytes && CandidateExtensions.Contains(info.Extension))
             {
-                ScanFinding? indicator = await MatchIndicatorsAsync(file, hash, info.Length, token);
-                if (indicator is not null)
+                IReadOnlyList<ScanFinding> indicators = await MatchIndicatorsAsync(file, hash, info.Length, token);
+                if (indicators.Count > 0)
                 {
-                    AddUnique(report, indicator);
+                    foreach (ScanFinding indicator in indicators) AddUnique(report, indicator);
                     return;
                 }
             }
@@ -151,21 +151,23 @@ public sealed class FileSystemScanner(SignatureDatabase database, HashMatcher ha
         }
     }
 
-    private async Task<ScanFinding?> MatchIndicatorsAsync(string path, string hash, long size, CancellationToken token)
+    private async Task<IReadOnlyList<ScanFinding>> MatchIndicatorsAsync(string path, string hash, long size,
+        CancellationToken token)
     {
         byte[] data = await File.ReadAllBytesAsync(path, token);
         string ascii = Encoding.Latin1.GetString(data);
         string unicode = Encoding.Unicode.GetString(data);
+        var findings = new List<ScanFinding>();
         foreach (IndicatorRule rule in database.Indicators)
         {
             List<string> matched = rule.Indicators.Where(x =>
                 ascii.Contains(x, StringComparison.Ordinal) || unicode.Contains(x, StringComparison.Ordinal)).ToList();
             if (matched.Count >= Math.Max(2, rule.Threshold))
-                return new(FindingStatus.Detected, "FILE", rule.Name,
+                findings.Add(new(FindingStatus.Detected, "FILE", rule.Name,
                     $"KNOWN STATIC SIGNATURE ({matched.Count} indicators)", path, hash, size, matched,
-                    File.GetLastWriteTimeUtc(path));
+                    File.GetLastWriteTimeUtc(path)));
         }
-        return null;
+        return findings;
     }
 
     public static ScanProgress ToProgress(ScanReport report, string phase, string path) => new(phase,

@@ -1,5 +1,9 @@
 [
   { "name": "ALTClient static signature", "threshold": 3, "indicators": ["ALT.AltFeatures", "ALT.AuthManager", "LocalPlatformIDSpoof", "SpoofMovePatch", "LagServerLoop", "KillLoopAll", "DisableSpawnablesLoop", "BanUserPatch"] },
   { "name": "Pavelmenu static signature", "threshold": 3, "indicators": ["Fusionfuck.FusionFucker", "TeleportAllRequestData", "FreezeAllPlayers", "SceneCleaner", "DamageAllPlayers", "HideFromPlayerList", "Rigspam", "DespawnAllLocal"] },
-  { "name": "RepUtils v5 static signature", "threshold": 3, "indicators": ["melonmenu.RepCommandMessage", "RepCommandData", "BlackHoleAnchor2m", "VoiceAnchor", "ProjectileVoidBall", "InfiniteAmmo", "AntiDespawn", "PlayerRepDamageData"] }
+  { "name": "RepUtils v5 static signature", "threshold": 3, "indicators": ["melonmenu.RepCommandMessage", "RepCommandData", "BlackHoleAnchor2m", "VoiceAnchor", "ProjectileVoidBall", "InfiniteAmmo", "AntiDespawn", "PlayerRepDamageData"] },
+  { "name": "God Mode behavior signature", "threshold": 3, "indicators": ["GodMode", "ToggleGodMode", "InfiniteHealth", "Invincibility", "DamageImmunity", "NoDamagePatch"] },
+  { "name": "Stat Changer behavior signature", "threshold": 3, "indicators": ["StatChanger", "AvatarStatOverride", "SetAvatarStrength", "SetAvatarAgility", "SetAvatarVitality", "OverrideAvatarStats"] },
+  { "name": "Aim manipulation behavior signature", "threshold": 3, "indicators": ["SilentAim", "AimTarget", "AimBone", "AimFov", "AutoAim", "TargetPlayer"] },
+  { "name": "Freecam behavior signature", "threshold": 3, "indicators": ["Freecam", "FreeCamera", "DetachCamera", "CameraTeleport", "SpectatorCamera", "CameraControllerOverride"] }
 ]

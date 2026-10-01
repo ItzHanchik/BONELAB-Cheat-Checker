@@ -13,6 +13,6 @@ TestResults/
 *.dll
 *.exe
 *.zip
-reports/
-evidence/
+/reports/
+/evidence/
 
