@@ -1,0 +1,8 @@
+[
+  { "name": "ALTClient supplied sample", "value": "17wnfk1.dll" },
+  { "name": "Pavelmenu supplied sample", "value": "p137p15.dll" },
+  { "name": "ALTClient assembly", "value": "ALTClient.dll" },
+  { "name": "Pavelmenu assembly", "value": "Pavelmenu.dll" },
+  { "name": "RepUtils v5 supplied sample", "value": "reputilsv5.dll" },
+  { "name": "RepUtils v5 no-license sample", "value": "reputilsv5_nolicense.dll" }
+]

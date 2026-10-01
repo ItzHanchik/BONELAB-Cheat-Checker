@@ -1,0 +1,21 @@
+name: Checker build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-self-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - name: Build
+        run: dotnet build BoneZAntiCheat/BoneZAntiCheat.csproj -c Release
+      - name: Embedded self-test
+        run: dotnet BoneZAntiCheat/bin/Release/net9.0-windows/Checker.dll --self-test
+
