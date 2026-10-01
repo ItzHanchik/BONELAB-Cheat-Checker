@@ -1,6 +1,6 @@
 # BoneZ AntiCheat Checker 2.8
 
-Публичный исходный код: https://github.com/irembo337/BoneZ-Checker
+Публичный исходный код и подписанные релизы: https://github.com/irembo337/BONELAB-Cheat-Checker
 
 Версия 2.8 выпускается как `Checker.exe` / `Checker.dll`, использует полностью
 чёрную пользовательскую рамку без белой системной полосы и только автоматическое обнаружение Discord Data Package,

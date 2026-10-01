@@ -1,6 +1,8 @@
-# BoneZ AntiCheat Checker
+# BONELAB Cheat Checker
 
-Public source repository for the defensive BONELAB Checker maintained by BoneZ.
+Public source and signed releases for the defensive BONELAB Cheat Checker maintained by BoneZ.
+
+Download verified builds from [GitHub Releases](https://github.com/irembo337/BONELAB-Cheat-Checker/releases).
 
 The application scans local BONELAB, MelonLoader, Fusion and verified Discord Data
 Package artifacts without executing discovered DLLs. Suspicious managed assemblies
