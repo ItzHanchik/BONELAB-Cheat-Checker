@@ -1,10 +1,14 @@
-name: Checker build
+name: Synapse Checker build
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build-and-self-test:
@@ -15,7 +19,36 @@ jobs:
         with:
           dotnet-version: 9.0.x
       - name: Build
-        run: dotnet build BoneZAntiCheat/BoneZAntiCheat.csproj -c Release
+        run: dotnet build SynapseChecker/SynapseChecker.csproj -c Release
       - name: Embedded self-test
-        run: dotnet BoneZAntiCheat/bin/Release/net9.0-windows/Checker.dll --self-test
+        run: dotnet SynapseChecker/bin/Release/net9.0-windows/SynapseChecker.dll --self-test
+      - name: Publish self-contained win-x64
+        run: dotnet publish SynapseChecker/SynapseChecker.csproj -c Release -r win-x64 --self-contained true -o publish/SynapseChecker
+      - name: Archive publish output
+        shell: pwsh
+        run: Compress-Archive -Path 'publish/SynapseChecker/*' -DestinationPath 'SynapseChecker-2.8.0-win-x64.zip' -CompressionLevel Optimal
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SynapseChecker-2.8.0-win-x64
+          path: SynapseChecker-2.8.0-win-x64.zip
+          retention-days: 30
+      - name: Create GitHub release
+        if: github.event_name != 'push'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $zip = 'SynapseChecker-2.8.0-win-x64.zip'
+          $tag = 'v2.8.0'
+          $notes = "Synapse Checker 2.8.0 - self-contained сборка под Windows x64.`n`n- Распакуйте ZIP и запустите SynapseChecker.exe (Windows запросит права администратора через UAC).`n- Discord: https://discord.gg/9ZUUe5bXJh"
+          $evt = Get-Content $env:GITHUB_EVENT_PATH | ConvertFrom-Json
+          $sha = if ($evt.pull_request.head.sha) { $evt.pull_request.head.sha } else { $env:GITHUB_SHA }
+          $existing = gh release view $tag --json tagName 2>$null
+          if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($existing)) {
+            gh release create $tag $zip --target $sha --title 'Synapse Checker 2.8.0' --notes $notes
+          } else {
+            gh release upload $tag $zip --clobber
+          }
+
 
