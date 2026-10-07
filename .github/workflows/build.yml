@@ -1,4 +1,4 @@
-name: Checker build
+name: Synapse Checker build
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
         with:
           dotnet-version: 9.0.x
       - name: Build
-        run: dotnet build BoneZAntiCheat/BoneZAntiCheat.csproj -c Release
+        run: dotnet build SynapseChecker/SynapseChecker.csproj -c Release
       - name: Embedded self-test
-        run: dotnet BoneZAntiCheat/bin/Release/net9.0-windows/Checker.dll --self-test
+        run: dotnet SynapseChecker/bin/Release/net9.0-windows/SynapseChecker.dll --self-test
 
