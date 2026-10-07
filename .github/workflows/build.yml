@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   build-and-self-test:
@@ -18,4 +19,16 @@ jobs:
         run: dotnet build SynapseChecker/SynapseChecker.csproj -c Release
       - name: Embedded self-test
         run: dotnet SynapseChecker/bin/Release/net9.0-windows/SynapseChecker.dll --self-test
+      - name: Publish self-contained win-x64
+        run: dotnet publish SynapseChecker/SynapseChecker.csproj -c Release -r win-x64 --self-contained true -o publish/SynapseChecker
+      - name: Archive publish output
+        shell: pwsh
+        run: Compress-Archive -Path 'publish/SynapseChecker/*' -DestinationPath 'SynapseChecker-2.8.0-win-x64.zip' -CompressionLevel Optimal
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SynapseChecker-2.8.0-win-x64
+          path: SynapseChecker-2.8.0-win-x64.zip
+          retention-days: 30
+
 
