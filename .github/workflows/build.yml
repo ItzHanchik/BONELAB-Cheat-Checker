@@ -7,6 +7,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-and-self-test:
     runs-on: windows-latest
@@ -30,5 +33,20 @@ jobs:
           name: SynapseChecker-2.8.0-win-x64
           path: SynapseChecker-2.8.0-win-x64.zip
           retention-days: 30
+      - name: Create GitHub release (manual runs)
+        if: github.event_name == 'workflow_dispatch'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $zip = 'SynapseChecker-2.8.0-win-x64.zip'
+          $tag = 'v2.8.0'
+          $notes = "Synapse Checker 2.8.0 - self-contained сборка под Windows x64.`n`n- Распакуйте ZIP и запустите SynapseChecker.exe (Windows запросит права администратора через UAC).`n- Discord: https://discord.gg/9ZUUe5bXJh"
+          $existing = gh release view $tag --json tagName 2>$null
+          if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($existing)) {
+            gh release create $tag $zip --target $env:GITHUB_SHA --title 'Synapse Checker 2.8.0' --notes $notes
+          } else {
+            gh release upload $tag $zip --clobber
+          }
 
 
